@@ -1,4 +1,3 @@
-Sharingan painter · DART
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
  
@@ -98,8 +97,7 @@ class SharinganPainter extends CustomPainter {
       radius * 0.06,
       highlightPaint,
     );
-
-  
+ 
     // --- Outer border glow ---
     final borderPaint = Paint()
       ..color = const Color(0xFFCC0000).withOpacity(0.6)
@@ -112,4 +110,3 @@ class SharinganPainter extends CustomPainter {
   bool shouldRepaint(SharinganPainter oldDelegate) =>
       oldDelegate.rotation != rotation;
 }
- 
