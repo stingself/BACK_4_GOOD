@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I'M BACK 👁️</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0A0A0A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+
+    /* starfield */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 10% 15%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 30% 8%,  rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 55% 20%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 75% 5%,  rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 88% 18%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 20% 50%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 65% 42%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 45% 65%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 85% 60%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 5%  80%, rgba(255,255,255,.3) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 95% 75%, rgba(255,255,255,.5) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .top-label {
+      color: rgba(255,255,255,0.25);
+      font-size: 11px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 44px;
+    }
+
+    /* eyes row */
+    .eyes {
+      display: flex;
+      gap: 50px;
+      align-items: flex-start;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .eye-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    canvas {
+      border-radius: 50%;
+      display: block;
+    }
+
+    .eye-label {
+      font-size: 12px;
+      letter-spacing: 3px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .s-label { color: rgba(204,0,0,0.85); }
+    .r-label { color: rgba(153,102,255,0.85); }
+
+    /* divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .div-line { width: 55px; height: 1px; }
+    .div-dot  { width: 7px; height: 7px; border-radius: 50%; background: #CC0000; }
+
+    /* I'M BACK */
+    .im-back-wrap { position: relative; text-align: center; margin-bottom: 14px; }
+    .im-back-glow {
+      position: absolute;
+      inset: 0;
+      font-size: clamp(32px, 8vw, 52px);
+      font-weight: 900;
+      letter-spacing: 10px;
+      color: transparent;
+      text-align: center;
+      filter: blur(14px);
+      opacity: 0.5;
+      background: linear-gradient(90deg,#FF4444,#fff,#AA66FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      pointer-events: none;
+    }
+    .im-back {
+      position: relative;
+      font-size: clamp(32px, 8vw, 52px);
+      font-weight: 900;
+      letter-spacing: 10px;
+      background: linear-gradient(90deg, #FF4444 0%, #FFFFFF 50%, #AA66FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      color: rgba(255,255,255,0.2);
+      font-size: 11px;
+      letter-spacing: 2px;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* floating particles */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* click burst */
+    .burst {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      animation: burst-go 0.7s forwards;
+    }
+    @keyframes burst-go {
+      0%   { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-label">Sharingan &nbsp;×&nbsp; Rinnegan</div>
+
+  <div class="eyes">
+    <div class="eye-col">
+      <canvas id="sharingan" width="160" height="160"></canvas>
+      <span class="eye-label s-label">Sharingan</span>
+    </div>
+    <div class="eye-col">
+      <canvas id="rinnegan" width="160" height="160"></canvas>
+      <span class="eye-label r-label">Rinnegan</span>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-line" style="background:linear-gradient(90deg,transparent,rgba(204,0,0,0.6))"></div>
+    <div class="div-dot" id="dot"></div>
+    <div class="div-line" style="background:linear-gradient(90deg,rgba(102,51,170,0.6),transparent)"></div>
+  </div>
+
+  <div class="im-back-wrap">
+    <div class="im-back-glow">I'M BACK</div>
+    <div class="im-back">I'M BACK</div>
+  </div>
+  <div class="tagline">— and this time, nothing can stop me —</div>
+</div>
+
+<script>
+  const TWO_PI = Math.PI * 2;
+
+  /* ── SHARINGAN ── */
+  function drawSharingan(ctx, r, rot) {
+    const cx = r, cy = r;
+    ctx.clearRect(0, 0, r*2, r*2);
+
+    const bg = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    bg.addColorStop(0,'#8B0000');
+    bg.addColorStop(0.6,'#3D0000');
+    bg.addColorStop(1,'#1A0000');
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,TWO_PI);
+    ctx.fillStyle = bg; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.92,0,TWO_PI);
+    ctx.strokeStyle='#000'; ctx.lineWidth=r*0.06; ctx.stroke();
+
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
+    for(let i=0;i<3;i++){
+      ctx.save(); ctx.rotate(i*TWO_PI/3);
+      const tx=0, ty=-r*0.45, tr=r*0.13;
+      ctx.beginPath(); ctx.arc(tx,ty,tr,0,TWO_PI);
+      ctx.fillStyle='#0A0000'; ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(tx, ty+tr);
+      ctx.quadraticCurveTo(tx+r*0.18,ty+r*0.18,tx+r*0.15,ty+r*0.22);
+      ctx.quadraticCurveTo(tx+r*0.08,ty+r*0.30,tx-tr*0.4,ty+tr*1.1);
+      ctx.fillStyle='#0A0000'; ctx.fill();
+      ctx.restore();
+    }
+    ctx.beginPath(); ctx.arc(0,0,r*0.60,0,TWO_PI);
+    ctx.strokeStyle='rgba(0,0,0,0.4)'; ctx.lineWidth=r*0.025; ctx.stroke();
+    ctx.restore();
+
+    const pu = ctx.createRadialGradient(cx,cy,0,cx,cy,r*0.22);
+    pu.addColorStop(0,'#000'); pu.addColorStop(1,'#1A0000');
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.22,0,TWO_PI);
+    ctx.fillStyle=pu; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx-r*0.06,cy-r*0.06,r*0.06,0,TWO_PI);
+    ctx.fillStyle='rgba(255,255,255,0.15)'; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx,cy,r-1,0,TWO_PI);
+    ctx.strokeStyle='rgba(204,0,0,0.6)'; ctx.lineWidth=2; ctx.stroke();
+  }
+
+  /* ── RINNEGAN ── */
+  function drawRinnegan(ctx, r, rot) {
+    const cx=r, cy=r;
+    ctx.clearRect(0,0,r*2,r*2);
+
+    const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    bg.addColorStop(0,'#5522AA');
+    bg.addColorStop(0.55,'#2D1166');
+    bg.addColorStop(1,'#0D0520');
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,TWO_PI);
+    ctx.fillStyle=bg; ctx.fill();
+
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
+
+    for(let i=1;i<=4;i++){
+      const rr=r*(0.2+i*0.17); if(rr>=r) break;
+      ctx.beginPath(); ctx.arc(0,0,rr,0,TWO_PI);
+      ctx.strokeStyle=`rgba(153,102,255,${0.2+(4-i)*0.07})`;
+      ctx.lineWidth=r*0.022; ctx.stroke();
+    }
+
+    for(let i=0;i<6;i++){
+      const a=i*TWO_PI/6, tr=r*0.085;
+      const tx=Math.cos(a)*r*0.62, ty=Math.sin(a)*r*0.62;
+      ctx.beginPath(); ctx.arc(tx,ty,tr,0,TWO_PI);
+      ctx.fillStyle='#220044'; ctx.fill();
+      const ta=a+Math.PI*0.6;
+      ctx.beginPath();
+      ctx.moveTo(tx,ty);
+      ctx.quadraticCurveTo(tx+Math.cos(ta)*tr*2.2,ty+Math.sin(ta)*tr*2.2,
+        tx+Math.cos(ta+0.5)*tr*1.5,ty+Math.sin(ta+0.5)*tr*1.5);
+      ctx.strokeStyle='#220044'; ctx.lineWidth=tr*0.7; ctx.lineCap='round'; ctx.stroke();
+    }
+
+    for(let i=0;i<3;i++){
+      const a=i*TWO_PI/3, tr=r*0.075;
+      const tx=Math.cos(a)*r*0.35, ty=Math.sin(a)*r*0.35;
+      ctx.beginPath(); ctx.arc(tx,ty,tr,0,TWO_PI);
+      ctx.fillStyle='#110033'; ctx.fill();
+    }
+    ctx.restore();
+
+    const pu=ctx.createRadialGradient(cx,cy,0,cx,cy,r*0.2);
+    pu.addColorStop(0,'#110022'); pu.addColorStop(1,'#220044');
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.2,0,TWO_PI);
+    ctx.fillStyle=pu; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx-r*0.05,cy-r*0.05,r*0.05,0,TWO_PI);
+    ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(cx,cy,r-1,0,TWO_PI);
+    ctx.strokeStyle='rgba(153,102,255,0.5)'; ctx.lineWidth=2; ctx.stroke();
+  }
+
+  /* ── ANIMATE ── */
+  const sc   = document.getElementById('sharingan');
+  const rc   = document.getElementById('rinnegan');
+  const sCtx = sc.getContext('2d');
+  const rCtx = rc.getContext('2d');
+  const dot  = document.getElementById('dot');
+  const glow = document.querySelector('.im-back-glow');
+
+  function loop(ts) {
+    const rot   = (ts / 6000) * TWO_PI;
+    const pulse = (Math.sin(ts / 1800) + 1) / 2;
+
+    drawSharingan(sCtx, 80, rot);
+    drawRinnegan(rCtx,  80, -rot * 0.6);
+
+    sc.style.boxShadow = `0 0 ${20+pulse*20}px ${8+pulse*10}px rgba(204,0,0,${0.4+pulse*0.4})`;
+    rc.style.boxShadow = `0 0 ${20+pulse*20}px ${8+pulse*10}px rgba(102,51,170,${0.4+pulse*0.4})`;
+    dot.style.opacity  = 0.4 + pulse * 0.6;
+    glow.style.opacity = 0.3 + pulse * 0.4;
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  /* ── FLOATING PARTICLES ── */
+  const colors = ['#CC0000','#9966FF','#FF4444','#6633AA','#FF6666'];
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.width  = (4 + Math.random()*6) + 'px';
+    p.style.height = p.style.width;
+    p.style.left   = Math.random()*100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration  = (6 + Math.random()*10) + 's';
+    p.style.animationDelay     = (Math.random()*10) + 's';
+    document.body.appendChild(p);
+  }
+
+  /* ── CLICK BURST ── */
+  const burstColors = ['#FF4444','#9966FF','#FFFFFF','#FF6600','#CC0000','#AA66FF'];
+  document.addEventListener('click', e => {
+    for(let i=0;i<10;i++){
+      const b = document.createElement('div');
+      b.className = 'burst';
+      b.style.left = e.clientX + 'px';
+      b.style.top  = e.clientY + 'px';
+      b.style.background = burstColors[Math.floor(Math.random()*burstColors.length)];
+      const angle = Math.random() * TWO_PI;
+      const dist  = 50 + Math.random() * 90;
+      b.style.setProperty('--tx', Math.cos(angle)*dist + 'px');
+      b.style.setProperty('--ty', Math.sin(angle)*dist + 'px');
+      document.body.appendChild(b);
+      setTimeout(()=>b.remove(), 750);
+    }
+  });
+</script>
+</body>
+</html>
